@@ -74,7 +74,7 @@ namespace ExileCore
             {
                 form.Load += (sender, args) =>
                 {
-                    var f = (RenderForm) sender;
+                    var f = (RenderForm)sender;
                     WinApi.EnableTransparent(f.Handle);
                     WinApi.SetTransparent(f.Handle);
                 };
@@ -107,7 +107,7 @@ namespace ExileCore
                         {
                             if (versionChecker.AutoUpdate.IsDownloading)
                             {
-                                DebugWindow.LogMsg("Core -> Currently downloading update, dont check again..."); 
+                                DebugWindow.LogMsg("Core -> Currently downloading update, dont check again...");
                                 Thread.Sleep(10 * 1000);
                                 continue;
                             }
@@ -139,7 +139,7 @@ namespace ExileCore
                 ParallelRunner = CoroutineRunnerParallel;
 
                 // Task.Run(ParallelCoroutineRunner);
-                var th = new Thread(ParallelCoroutineManualThread) {Name = "Parallel Coroutine", IsBackground = true};
+                var th = new Thread(ParallelCoroutineManualThread) { Name = "Parallel Coroutine", IsBackground = true };
                 th.Start();
                 _mainMenu = new MenuWindow(this, _settings, _dx11.ImGuiRender.fonts, ref versionChecker);
                 _debugWindow = new DebugWindow(Graphics, _coreSettings);
@@ -155,7 +155,8 @@ namespace ExileCore
                     {
                         var coroutine1 =
                             new Coroutine(() => { MultiThreadManager.ChangeNumberThreads(_coreSettings.Threads); },
-                                new WaitTime(2000), null, "Change Threads Number", false) {SyncModWork = true};
+                                new WaitTime(2000), null, "Change Threads Number", false)
+                            { SyncModWork = true };
 
                         ParallelRunner.Run(coroutine1);
                     }
@@ -178,7 +179,7 @@ namespace ExileCore
                 if (GameController == null && _memory != null) Inject();
 
                 var coroutine = new Coroutine(MainControl(), null, "Render control")
-                    {Priority = CoroutinePriority.Critical};
+                { Priority = CoroutinePriority.Critical };
 
                 CoroutineRunnerParallel.Run(coroutine);
                 NextCoroutineTime = Time.TotalMilliseconds;
@@ -208,7 +209,7 @@ namespace ExileCore
             private set
             {
                 _targetPcFrameTime = value;
-                _deltaTargetPcFrameTime =  value / 1000f;
+                _deltaTargetPcFrameTime = value / 1000f;
             }
         }
 
@@ -363,7 +364,7 @@ namespace ExileCore
 
                 if (GameController == null || pluginManager == null || !pluginManager.AllPluginsLoaded)
                 {
-                    _coreDebugInformation.Tick = (float) (_sw.Elapsed.TotalMilliseconds - _tickStart);
+                    _coreDebugInformation.Tick = (float)(_sw.Elapsed.TotalMilliseconds - _tickStart);
                     return;
                 }
 
@@ -377,7 +378,7 @@ namespace ExileCore
                     {
                         var fpsArray = GameController.IngameState.FPSRectangle.DiagnosticArrayValues;
 
-                        var dynamicFps = 1000f / (fpsArray.SkipF((int) (fpsArray.Length * 0.75f)).AverageF() *
+                        var dynamicFps = 1000f / (fpsArray.SkipF((int)(fpsArray.Length * 0.75f)).AverageF() *
                                                   (_coreSettings.DynamicPercent / 100f));
 
                         TargetPcFrameTime = Math.Min(_minimalFpsTime, dynamicFps);
@@ -387,7 +388,7 @@ namespace ExileCore
                 _tickStart = _sw.Elapsed.TotalMilliseconds;
                 GameController.Tick();
                 _tickEnd = _sw.Elapsed.TotalMilliseconds;
-                _gcTickDebugInformation.Tick = (float) (_tickEnd - _tickStart);
+                _gcTickDebugInformation.Tick = (float)(_tickEnd - _tickStart);
 
                 _tickStart = _sw.Elapsed.TotalMilliseconds;
 
@@ -448,7 +449,7 @@ namespace ExileCore
                             foreach (var waitingJob in WaitingJobs)
                             {
                                 waitingJob.plugin.TickDebugInformation.CorrectAfterTick(
-                                    (float) waitingJob.job.ElapsedMs);
+                                    (float)waitingJob.job.ElapsedMs);
 
                                 if (waitingJob.job.IsFailed && waitingJob.job.IsCompleted)
                                 {
@@ -491,8 +492,8 @@ namespace ExileCore
                 }
 
                 _tickEnd = _sw.Elapsed.TotalMilliseconds;
-                _allPluginsDebugInformation.Tick = (float) (_tickEnd - _tickStart);
-                _coreDebugInformation.Tick = (float) (_tickEnd - _tickStartCore);
+                _allPluginsDebugInformation.Tick = (float)(_tickEnd - _tickStart);
+                _coreDebugInformation.Tick = (float)(_tickEnd - _tickStartCore);
             }
             catch (Exception ex)
             {
@@ -563,7 +564,7 @@ namespace ExileCore
                     if (_elTime < _targetParallelFpsTime)
                     {
                         var millisecondsDelay = _targetParallelFpsTime - _elTime;
-                        Thread.Sleep((int) millisecondsDelay);
+                        Thread.Sleep((int)millisecondsDelay);
                     }
                 }
             }
@@ -594,13 +595,13 @@ namespace ExileCore
                 }
 
                 _tickEnd = _sw.Elapsed.TotalMilliseconds;
-                _coroutineTickDebugInformation.Tick = (float) (_tickEnd - _tickStart);
+                _coroutineTickDebugInformation.Tick = (float)(_tickEnd - _tickStart);
             }
 
 
             if (NextRender <= Time.TotalMilliseconds)
             {
-                _dx11.ImGuiRender.InputUpdate(_totalDebugInformation.Tick*_deltaTargetPcFrameTime);
+                _dx11.ImGuiRender.InputUpdate(_totalDebugInformation.Tick * _deltaTargetPcFrameTime);
                 _dx11.Render(TargetPcFrameTime, this);
                 NextRender += TargetPcFrameTime;
                 frameCounter++;

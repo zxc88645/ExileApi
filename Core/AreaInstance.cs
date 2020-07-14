@@ -17,6 +17,7 @@ namespace ExileCore
             Act = area.Act;
             IsTown = area.IsTown;
             IsHideout = Name.Contains("Hideout") && !Name.Contains("Syndicate Hideout");
+            IsHideout = (Name.Contains("藏身處") && !Name.Contains("密教藏身處")) || IsHideout;
             HasWaypoint = area.HasWaypoint || IsHideout;
         }
 
@@ -39,7 +40,7 @@ namespace ExileCore
 
         public static string GetTimeString(TimeSpan timeSpent)
         {
-            var allsec = (int) timeSpent.TotalSeconds;
+            var allsec = (int)timeSpent.TotalSeconds;
             var secs = allsec % 60;
             var mins = allsec / 60;
             var hours = mins / 60;

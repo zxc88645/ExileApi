@@ -30,11 +30,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\PoeHelper\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>..\..\PoeHelper\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -511,6 +512,9 @@
       <Project>{38084bc9-079d-487e-b774-d2f407dc8389}</Project>
       <Name>GameOffsets</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

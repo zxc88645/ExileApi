@@ -263,25 +263,25 @@ namespace ExileCore.RenderQ
                 }
             };
 
-            io.KeyMap[(int) ImGuiKey.Tab] = (int) Keys.Tab;
-            io.KeyMap[(int) ImGuiKey.LeftArrow] = (int) Keys.Left;
-            io.KeyMap[(int) ImGuiKey.RightArrow] = (int) Keys.Right;
-            io.KeyMap[(int) ImGuiKey.UpArrow] = (int) Keys.Up;
-            io.KeyMap[(int) ImGuiKey.DownArrow] = (int) Keys.Down;
-            io.KeyMap[(int) ImGuiKey.PageUp] = (int) Keys.PageUp;
-            io.KeyMap[(int) ImGuiKey.PageDown] = (int) Keys.PageDown;
-            io.KeyMap[(int) ImGuiKey.Home] = (int) Keys.Home;
-            io.KeyMap[(int) ImGuiKey.End] = (int) Keys.End;
-            io.KeyMap[(int) ImGuiKey.Delete] = (int) Keys.Delete;
-            io.KeyMap[(int) ImGuiKey.Backspace] = (int) Keys.Back;
-            io.KeyMap[(int) ImGuiKey.Enter] = (int) Keys.Enter;
-            io.KeyMap[(int) ImGuiKey.Escape] = (int) Keys.Escape;
-            io.KeyMap[(int) ImGuiKey.A] = (int) Keys.A;
-            io.KeyMap[(int) ImGuiKey.C] = (int) Keys.C;
-            io.KeyMap[(int) ImGuiKey.V] = (int) Keys.V;
-            io.KeyMap[(int) ImGuiKey.X] = (int) Keys.X;
-            io.KeyMap[(int) ImGuiKey.Y] = (int) Keys.Y;
-            io.KeyMap[(int) ImGuiKey.Z] = (int) Keys.Z;
+            io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
+            io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
+            io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
+            io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
+            io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
+            io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp;
+            io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown;
+            io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
+            io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
+            io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
+            io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back;
+            io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter;
+            io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
+            io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
+            io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
+            io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
+            io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
+            io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
+            io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
 
             _form.KeyDown += (sender, args) =>
             {
@@ -314,7 +314,7 @@ namespace ExileCore.RenderQ
         public void InputUpdate(double tick)
         {
             io = ImGui.GetIO();
-            io.DeltaTime = (float) (tick);
+            io.DeltaTime = (float)(tick);
             io.MousePos = Input.MousePositionNum;
             var ioWantCaptureMouse = io.WantCaptureMouse;
             var ioWantCaptureKeyboard = io.WantCaptureKeyboard;
@@ -341,6 +341,7 @@ namespace ExileCore.RenderQ
                 var context = ImGui.CreateContext();
                 ImGui.SetCurrentContext(context);
                 io = ImGui.GetIO();
+
 
                 // io.ConfigFlags = ImGuiConfigFlags.NavEnableKeyboard;
                 SetSize(FormBounds);
@@ -396,8 +397,20 @@ namespace ExileCore.RenderQ
 
             var imFontAtlasGetGlyphRangesCyrillic = ImGuiNative.ImFontAtlas_GetGlyphRangesCyrillic(io.Fonts.NativePtr);
 
-            fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null),
-                "Default", 13);
+            //fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null), "Default", 14);
+
+
+            var fontAtlas = ImGui.GetIO().Fonts;
+
+            fonts["Default:13"] = new FontContainer(
+               fontAtlas.AddFontFromFileTTF(
+                @"fonts\\NotoSerifTC-Regular.otf",
+                20.0f,
+                null,
+                fontAtlas.GetGlyphRangesChineseFull()
+
+                ), "Default", 20);
+
 
             foreach (var tuple in fontsForLoad)
             {
@@ -405,22 +418,27 @@ namespace ExileCore.RenderQ
 
                 fixed (byte* f = &bytes[0])
                 {
+                    //fonts[$"{tuple.Item1.Replace(".ttf", "").Replace("fonts\\", "")}:{tuple.Item2}"] =
+                    //    new FontContainer(
+                    //        ImGuiNative.ImFontAtlas_AddFontFromFileTTF(io.Fonts.NativePtr, f, tuple.Item2, null,
+                    //            imFontAtlasGetGlyphRangesCyrillic ), tuple.Item1, tuple.Item2);                   
+
                     fonts[$"{tuple.Item1.Replace(".ttf", "").Replace("fonts\\", "")}:{tuple.Item2}"] =
                         new FontContainer(
                             ImGuiNative.ImFontAtlas_AddFontFromFileTTF(io.Fonts.NativePtr, f, tuple.Item2, null,
-                                imFontAtlasGetGlyphRangesCyrillic), tuple.Item1, tuple.Item2);
+                                (ushort*)io.Fonts.GetGlyphRangesChineseFull()), tuple.Item1, tuple.Item2);
                 }
             }
 
             if (fonts.Count > 0) lastFontContainer = fonts.First().Value;
 
             CoreSettings.Font.Values = new List<string>(fonts.Keys);
-            if (CoreSettings.Font.Value == null) 
+            if (CoreSettings.Font.Value == null)
             {
                 try
                 {
                     CoreSettings.Font.Value = CoreSettings.Font.Values.First();
-                } 
+                }
                 catch (Exception e)
                 {
                     DebugWindow.LogError($"ImGuiRender -> fonts not found, Exception: {e}");
@@ -552,7 +570,16 @@ namespace ExileCore.RenderQ
                     lastFontContainer = fontContainer;
                 }
 
-                if (b) ImGui.PushFont(lastFontContainer.Atlas);
+                try
+                {
+                    if (b) ImGui.PushFont(lastFontContainer.Atlas);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
 
                 if (height == -1) height = lastFontContainer.Size;
                 var size = MeasureText(text, height);
@@ -635,7 +662,7 @@ namespace ExileCore.RenderQ
             }
 
             coloredText[indexColoredText++] = text.Length - lastIndex;
-            var listIndexSpanCount = (int) Math.Ceiling(indexColoredText / (float) indexColors);
+            var listIndexSpanCount = (int)Math.Ceiling(indexColoredText / (float)indexColors);
 
             unsafe
             {
@@ -690,15 +717,15 @@ namespace ExileCore.RenderQ
         }
 
         private unsafe Vector2N DrawClrText2(
-            ref ReadOnlySpan<char> span, 
-            ref Vector2N position, 
-            float xStart, 
+            ref ReadOnlySpan<char> span,
+            ref Vector2N position,
+            float xStart,
             FontAlign align,
-            int start, 
+            int start,
             int len,
-            uint clr, 
-            int index, 
-            int spanIndex, 
+            uint clr,
+            int index,
+            int spanIndex,
             bool noColor = false)
         {
             var onlySpan = span.Slice(start, len);
@@ -775,7 +802,7 @@ namespace ExileCore.RenderQ
             }
 
             coloredText[indexColoredText++] = text.Length - lastIndex;
-            var listIndexSpanCount = (int) Math.Ceiling(indexColoredText / (float) indexColors);
+            var listIndexSpanCount = (int)Math.Ceiling(indexColoredText / (float)indexColors);
 
             if (listIndexSpanCount == 2)
             {
@@ -855,7 +882,7 @@ namespace ExileCore.RenderQ
                 _backGroundWindowPtr.AddText(new Vector2N(50, 15 + i), Color.White.ToImgui(),
                     $"{textBegin} -> {calcTextSize} ({w} )");
 
-                i += (int) calcTextSize.Y;
+                i += (int)calcTextSize.Y;
                 ImGui.PopFont();
             }
 
@@ -866,8 +893,8 @@ namespace ExileCore.RenderQ
                 $"RV {io.MetricsRenderVertices} : RI {io.MetricsRenderIndices} ^ RW {io.MetricsRenderWindows} {Environment.NewLine}" +
                 $"{io.Framerate}");
 
-            _backGroundWindowPtr.AddCircle(new Vector2N(100, 100), 25, (uint) Color.Pink.ToRgba());
-            _backGroundWindowPtr.AddCircleFilled(new Vector2N(300, 200), 25, (uint) Color.SpringGreen.ToRgba());
+            _backGroundWindowPtr.AddCircle(new Vector2N(100, 100), 25, (uint)Color.Pink.ToRgba());
+            _backGroundWindowPtr.AddCircleFilled(new Vector2N(300, 200), 25, (uint)Color.SpringGreen.ToRgba());
             _backGroundWindowPtr.AddLine(new Vector2N(10, 10), new Vector2N(300, 300), Color.Blue.ToImgui(), 5);
         }
 
@@ -885,7 +912,7 @@ namespace ExileCore.RenderQ
             if (data.TotalVtxCount > VertexBufferSize)
             {
                 VertexBuffer.Dispose();
-                VertexBufferSize = (int) (data.TotalVtxCount * 1.5f);
+                VertexBufferSize = (int)(data.TotalVtxCount * 1.5f);
 
                 VertexBuffer = new Buffer(Dx11.D11Device,
                     new BufferDescription
@@ -901,7 +928,7 @@ namespace ExileCore.RenderQ
             if (data.TotalIdxCount > IndexBufferSize)
             {
                 IndexBuffer.Dispose();
-                IndexBufferSize = (int) (data.TotalIdxCount * 1.5f);
+                IndexBufferSize = (int)(data.TotalIdxCount * 1.5f);
 
                 IndexBuffer = new Buffer(Dx11.D11Device,
                     new BufferDescription
@@ -961,13 +988,13 @@ namespace ExileCore.RenderQ
                             $"Could not find a texture with id '{drawCmd.TextureId}', please check your bindings");
                     }
 
-                    Dx11.DeviceContext.Rasterizer.SetScissorRectangle((int) (drawCmd.ClipRect.X - pos.X),
-                        (int) (drawCmd.ClipRect.Y - pos.Y),
-                        (int) (drawCmd.ClipRect.Z - pos.X),
-                        (int) (drawCmd.ClipRect.W - pos.Y));
+                    Dx11.DeviceContext.Rasterizer.SetScissorRectangle((int)(drawCmd.ClipRect.X - pos.X),
+                        (int)(drawCmd.ClipRect.Y - pos.Y),
+                        (int)(drawCmd.ClipRect.Z - pos.X),
+                        (int)(drawCmd.ClipRect.W - pos.Y));
 
                     Dx11.DeviceContext.PixelShader.SetShaderResource(0, Dx11.GetTexture(drawCmd.TextureId));
-                    var drawCmdElemCount = (int) drawCmd.ElemCount;
+                    var drawCmdElemCount = (int)drawCmd.ElemCount;
                     Dx11.DeviceContext.DrawIndexed(drawCmdElemCount, indexOffset, vertexOffset);
                     indexOffset += drawCmdElemCount;
                 }
@@ -1007,7 +1034,7 @@ namespace ExileCore.RenderQ
                 });
 
             //Blend
-            var blendStateDescription = new BlendStateDescription {AlphaToCoverageEnable = false};
+            var blendStateDescription = new BlendStateDescription { AlphaToCoverageEnable = false };
             blendStateDescription.RenderTarget[0].IsBlendEnabled = true;
             blendStateDescription.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
             blendStateDescription.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
@@ -1055,7 +1082,7 @@ namespace ExileCore.RenderQ
             //  Dx11.DeviceContext.Rasterizer.SetViewport(Viewport);
 
             Dx11.DeviceContext.InputAssembler.InputLayout = Layout;
-            vertexBuffer = new VertexBufferBinding {Buffer = VertexBuffer, Stride = sizeOfImDrawVert, Offset = 0};
+            vertexBuffer = new VertexBufferBinding { Buffer = VertexBuffer, Stride = sizeOfImDrawVert, Offset = 0 };
             Dx11.DeviceContext.InputAssembler.SetVertexBuffers(0, vertexBuffer);
             Dx11.DeviceContext.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R16_UInt, 0);
             Dx11.DeviceContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;

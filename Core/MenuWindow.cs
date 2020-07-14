@@ -47,7 +47,7 @@ namespace ExileCore
 
         public PluginsUpdateSettings PluginsUpdateSettings { get; }
         public List<ISettingsHolder> PluginsUpdateSettingsDrawers { get; }
-        
+
         public VersionChecker VersionChecker { get; }
 
         public MenuWindow(Core core, SettingsContainer settingsContainer, Dictionary<string, FontContainer> fonts, ref VersionChecker versionChecker)
@@ -190,9 +190,9 @@ namespace ExileCore
                 case VersionResult.PatchUpdate:
                     return ("Update Available", Color.Red);
                 case VersionResult.Error:
-                    return ("Version Not Readable", Color.Orange);                    
+                    return ("Version Not Readable", Color.Orange);
             }
-            return("Version Not Readable", Color.Yellow);
+            return ("Version Not Readable", Color.Yellow);
         }
 
         public unsafe void Render(GameController _gameController, List<PluginWrapper> plugins)
@@ -230,10 +230,14 @@ namespace ExileCore
             IsOpened = CoreSettings.Enable;
             if (!CoreSettings.Enable) return;
 
+
+
+
             ImGui.PushFont(Core.Graphics.Font.Atlas);
             ImGui.SetNextWindowSize(new Vector2(800, 600), ImGuiCond.FirstUseEver);
+
             var pOpen = CoreSettings.Enable.Value;
-            ImGui.Begin($"HUD S3ttings {VersionChecker.LocalVersion?.VersionString}", ref pOpen);
+            ImGui.Begin(@"中文ＨＵＤ Ｓ３ＴＴＩＮＧＳ {VersionChecker.LocalVersion?.VersionString}", ref pOpen);
             CoreSettings.Enable.Value = pOpen;
 
             ImGui.BeginChild("Left menu window", new Vector2(PluginNameWidth, ImGui.GetContentRegionAvail().Y), true,
@@ -279,7 +283,7 @@ namespace ExileCore
             if (ImGui.Selectable("PluginAutoUpdate", _index == -2))
             {
                 _index = -2;
-                Selected = () => 
+                Selected = () =>
                 {
                     PluginsUpdateSettings.Draw();
                 };
@@ -307,7 +311,7 @@ namespace ExileCore
                             Selected = () => plugin.DrawSettings();
                         }
                     }
-                    catch (Exception e) 
+                    catch (Exception e)
                     {
                         DebugWindow.LogError($"Listing Plugins failed!");
                         DebugWindow.LogDebug($"{e.Message}");
@@ -341,9 +345,9 @@ namespace ExileCore
             ImGui.TextColored(Color.GreenYellow.ToImguiVec4(), swStartedProgram.ElapsedMilliseconds.ToString());
             ImGui.BeginTabBar("Performance tabs");
 
-            for (var index = 0; index < ((Windows[]) WindowsName).Length; index++)
+            for (var index = 0; index < ((Windows[])WindowsName).Length; index++)
             {
-                var s = ((Windows[]) WindowsName)[index];
+                var s = ((Windows[])WindowsName)[index];
 
                 if (ImGui.BeginTabItem($"{s}##WindowName"))
                 {
@@ -357,120 +361,120 @@ namespace ExileCore
             switch (OpenWindow)
             {
                 case Windows.MainDebugs:
-                {
-                    ImGui.Columns(6, "Deb", true);
-                    ImGui.SetColumnWidth(0, 200);
-                    ImGui.SetColumnWidth(1, 75);
-                    ImGui.SetColumnWidth(2, 75);
-                    ImGui.SetColumnWidth(3, 100);
-                    ImGui.SetColumnWidth(4, 100);
-                    ImGui.Text("Name");
-                    ImGui.NextColumn();
-                    ImGui.TextUnformatted("%");
-                    ImGui.NextColumn();
-                    ImGui.Text("Tick");
-                    ImGui.NextColumn();
-                    ImGui.Text("Total");
-                    ImGui.SameLine();
-                    ImGui.TextDisabled("(?)");
-
-                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
                     {
-                        ImGui.SetTooltip(
-                            $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - Core.DebugInformations[0].Index) / (float) CoreSettings.TargetFps:0.00} sec.");
+                        ImGui.Columns(6, "Deb", true);
+                        ImGui.SetColumnWidth(0, 200);
+                        ImGui.SetColumnWidth(1, 75);
+                        ImGui.SetColumnWidth(2, 75);
+                        ImGui.SetColumnWidth(3, 100);
+                        ImGui.SetColumnWidth(4, 100);
+                        ImGui.Text("Name");
+                        ImGui.NextColumn();
+                        ImGui.TextUnformatted("%");
+                        ImGui.NextColumn();
+                        ImGui.Text("Tick");
+                        ImGui.NextColumn();
+                        ImGui.Text("Total");
+                        ImGui.SameLine();
+                        ImGui.TextDisabled("(?)");
+
+                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
+                        {
+                            ImGui.SetTooltip(
+                                $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - Core.DebugInformations[0].Index) / (float)CoreSettings.TargetFps:0.00} sec.");
+                        }
+
+                        ImGui.NextColumn();
+                        ImGui.Text("Total %%");
+                        ImGui.NextColumn();
+                        ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
+                        ImGui.NextColumn();
+
+                        foreach (var deb in MainDebugs)
+                        {
+                            DrawInfoForDebugInformation(deb, Core.DebugInformations[0], MainDebugs.Count);
+                        }
+
+                        ImGui.Columns(1, "", false);
+                        break;
                     }
-
-                    ImGui.NextColumn();
-                    ImGui.Text("Total %%");
-                    ImGui.NextColumn();
-                    ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
-                    ImGui.NextColumn();
-
-                    foreach (var deb in MainDebugs)
-                    {
-                        DrawInfoForDebugInformation(deb, Core.DebugInformations[0], MainDebugs.Count);
-                    }
-
-                    ImGui.Columns(1, "", false);
-                    break;
-                }
 
                 case Windows.NotMainDebugs:
-                {
-                    ImGui.Columns(4, "Deb", true);
-                    ImGui.SetColumnWidth(0, 200);
-                    ImGui.SetColumnWidth(1, 75);
-                    ImGui.SetColumnWidth(2, 75);
-                    ImGui.Text("Name");
-                    ImGui.NextColumn();
-                    ImGui.Text("Tick");
-                    ImGui.NextColumn();
-                    ImGui.Text("Total");
-                    ImGui.SameLine();
-                    ImGui.TextDisabled("(?)");
-
-                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
                     {
-                        ImGui.SetTooltip(
-                            $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - Core.DebugInformations[0].Index) / (float) CoreSettings.TargetFps:0.00} sec.");
+                        ImGui.Columns(4, "Deb", true);
+                        ImGui.SetColumnWidth(0, 200);
+                        ImGui.SetColumnWidth(1, 75);
+                        ImGui.SetColumnWidth(2, 75);
+                        ImGui.Text("Name");
+                        ImGui.NextColumn();
+                        ImGui.Text("Tick");
+                        ImGui.NextColumn();
+                        ImGui.Text("Total");
+                        ImGui.SameLine();
+                        ImGui.TextDisabled("(?)");
+
+                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
+                        {
+                            ImGui.SetTooltip(
+                                $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - Core.DebugInformations[0].Index) / (float)CoreSettings.TargetFps:0.00} sec.");
+                        }
+
+                        ImGui.NextColumn();
+
+                        ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
+                        ImGui.NextColumn();
+
+                        foreach (var deb in NotMainDebugs)
+                        {
+                            DrawInfoForNotMainDebugInformation(deb);
+                        }
+
+                        ImGui.Columns(1, "", false);
+                        break;
                     }
-
-                    ImGui.NextColumn();
-
-                    ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
-                    ImGui.NextColumn();
-
-                    foreach (var deb in NotMainDebugs)
-                    {
-                        DrawInfoForNotMainDebugInformation(deb);
-                    }
-
-                    ImGui.Columns(1, "", false);
-                    break;
-                }
 
                 case Windows.Plugins when AllPlugins == null:
                     AllPlugins = Core.DebugInformations.FirstOrDefault(x => x.Name == "All plugins");
                     break;
                 case Windows.Plugins:
-                {
-                    ImGui.Columns(6, "Deb", true);
-                    ImGui.SetColumnWidth(0, 200);
-                    ImGui.SetColumnWidth(1, 75);
-                    ImGui.SetColumnWidth(2, 75);
-                    ImGui.SetColumnWidth(3, 100);
-                    ImGui.SetColumnWidth(4, 100);
-                    ImGui.Text("Name");
-                    ImGui.NextColumn();
-                    ImGui.TextUnformatted("%");
-                    ImGui.NextColumn();
-                    ImGui.Text("Tick");
-                    ImGui.NextColumn();
-                    ImGui.Text("Total");
-                    ImGui.SameLine();
-                    ImGui.TextDisabled("(?)");
-
-                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
                     {
-                        ImGui.SetTooltip(
-                            $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - AllPlugins.Index) / (float) CoreSettings.TargetFps:0.00} sec.");
+                        ImGui.Columns(6, "Deb", true);
+                        ImGui.SetColumnWidth(0, 200);
+                        ImGui.SetColumnWidth(1, 75);
+                        ImGui.SetColumnWidth(2, 75);
+                        ImGui.SetColumnWidth(3, 100);
+                        ImGui.SetColumnWidth(4, 100);
+                        ImGui.Text("Name");
+                        ImGui.NextColumn();
+                        ImGui.TextUnformatted("%");
+                        ImGui.NextColumn();
+                        ImGui.Text("Tick");
+                        ImGui.NextColumn();
+                        ImGui.Text("Total");
+                        ImGui.SameLine();
+                        ImGui.TextDisabled("(?)");
+
+                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.None))
+                        {
+                            ImGui.SetTooltip(
+                                $"Update every {DebugInformation.SizeArray / CoreSettings.TargetFps} sec. Time to next update: {(DebugInformation.SizeArray - AllPlugins.Index) / (float)CoreSettings.TargetFps:0.00} sec.");
+                        }
+
+                        ImGui.NextColumn();
+                        ImGui.Text("Total %%");
+                        ImGui.NextColumn();
+                        ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
+                        ImGui.NextColumn();
+                        DrawInfoForDebugInformation(AllPlugins, Core.DebugInformations[0], MainDebugs.Count);
+
+                        foreach (var deb in PluginsDebug)
+                        {
+                            DrawInfoForDebugInformation(deb, AllPlugins, PluginsDebug.Count);
+                        }
+
+                        ImGui.Columns(1, "", false);
+                        break;
                     }
-
-                    ImGui.NextColumn();
-                    ImGui.Text("Total %%");
-                    ImGui.NextColumn();
-                    ImGui.Text($"Data for {DebugInformation.SizeArray / CoreSettings.TargetFps} sec.");
-                    ImGui.NextColumn();
-                    DrawInfoForDebugInformation(AllPlugins, Core.DebugInformations[0], MainDebugs.Count);
-
-                    foreach (var deb in PluginsDebug)
-                    {
-                        DrawInfoForDebugInformation(deb, AllPlugins, PluginsDebug.Count);
-                    }
-
-                    ImGui.Columns(1, "", false);
-                    break;
-                }
 
                 case Windows.Coroutines:
                     DrawCoroutineRunnerInfo(Core.CoroutineRunner);

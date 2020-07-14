@@ -33,9 +33,9 @@ namespace GameOffsets
 		[FieldOffset(0x730)] public long ZanaMissionChoice;
 		[FieldOffset(0x740)] public long CraftBenchWindow;
 		[FieldOffset(0x748)] public long UnveilWindow;
-		[FieldOffset(0x770)] public long SynthesisWindow;
-		[FieldOffset(0x780)] public long MetamorphWindow;
-		[FieldOffset(0x7D0)] public long AreaInstanceUi;
+		[FieldOffset(0x778)] public long SynthesisWindow;
+		[FieldOffset(0x788)] public long MetamorphWindow;
+		[FieldOffset(0x7D8)] public long AreaInstanceUi;
 		[FieldOffset(0x918)] public long GemLvlUpPanel;
 		[FieldOffset(0x8A8)] public long InvitesPanel;
 		[FieldOffset(0x9C8)] public long ItemOnGroundTooltip;

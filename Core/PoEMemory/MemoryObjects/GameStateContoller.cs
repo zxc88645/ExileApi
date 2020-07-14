@@ -58,8 +58,8 @@ namespace ExileCore.PoEMemory.MemoryObjects
         public FilesContainer Files { get; set; }
         public AreaLoadingState LoadingState { get; }
         public IngameState IngameState { get; }
-        public IList<GameState> CurrentGameStates => M.ReadDoublePtrVectorClasses<GameState>(Address + 0x8, IngameState);
-        public IList<GameState> ActiveGameStates => M.ReadDoublePtrVectorClasses<GameState>(Address + 0x20, IngameState, true);
+        public IList<GameState> CurrentGameStates => M.ReadDoublePtrVectorClasses<GameState>(Address + 0x0, IngameState);       //3.12
+        public IList<GameState> ActiveGameStates => M.ReadDoublePtrVectorClasses<GameState>(Address + 0x20, IngameState, true);     //3.12
         public bool IsPreGame => GameStateActive(PreGameStatePtr);
         public bool IsLoginState => GameStateActive(LoginStatePtr);
         public bool IsSelectCharacterState => GameStateActive(SelectCharacterStatePtr);

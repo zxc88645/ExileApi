@@ -10,13 +10,14 @@ namespace GameOffsets
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct PlayerComponentOffsets
     {
+        [FieldOffset(0x158)] public uint Name;
         [FieldOffset(0x17C)] public uint XP;
         [FieldOffset(0x180)] public int Strength;
         [FieldOffset(0x184)] public int Dexterity;
         [FieldOffset(0x188)] public int Intelligence;
         [FieldOffset(0x1AB)] public byte PantheonMinor;
         [FieldOffset(0x1AC)] public byte PantheonMajor;
-        [FieldOffset(0x1A8)] public byte Level;
+        [FieldOffset(0x1AA)] public byte Level;
         [FieldOffset(0x16C)] public byte AllocatedLootId;                
         [FieldOffset(0x20A)] public byte PropheciesCount;
         public long PropheciesOffset => 0x20c;

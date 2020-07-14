@@ -103,7 +103,7 @@ namespace ExileCore
                 if (size <= 0 || address.ToInt64() <= 0 /*|| !AddressIsValid(address)*/) return new byte[0];
                 var buffer = new byte[size];
                 ProcessMemory.ReadProcessMemoryArray(OpenProcessHandle, address, buffer, 0, size);
-
+                
                 // NativeMethods.ReadProcessMemory(SafeHandle, address, buffer, size);
                 return buffer;
             }

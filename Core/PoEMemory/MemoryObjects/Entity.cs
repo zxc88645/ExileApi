@@ -383,7 +383,8 @@ namespace ExileCore.PoEMemory.MemoryObjects
             }
         }
 
-        public uint Id => (uint) (_id = _id ?? M.Read<uint>(Address + 0x50));
+        //public uint Id => (uint) (_id = _id ?? M.Read<uint>(Address + 0x50)); //3.11
+        public uint Id => (uint) (_id = _id ?? M.Read<uint>(Address + 0x58)); //3.12
         public uint InventoryId => (uint) (_inventoryId = _inventoryId ?? M.Read<uint>(Address + 0x68));
 
         //public bool IsValid => M.Read<int>(EntityOffsets.Head.MainObject+0x18,0) == 0x65004D;
@@ -710,6 +711,12 @@ namespace ExileCore.PoEMemory.MemoryObjects
 
             if (HasComponent<Player>())
                 return EntityType.Player;
+
+            if (Path.StartsWith("Metadata/MiscellaneousObjects/Harvest", StringComparison.Ordinal) || Path.StartsWith("Metadata/Terrain/Leagues/Harvest", StringComparison.Ordinal))
+            {
+                League = LeagueType.Harvest;
+                return EntityType.MiscellaneousObjects;
+            }
 
             if (HasComponent<MinimapIcon>())
             {

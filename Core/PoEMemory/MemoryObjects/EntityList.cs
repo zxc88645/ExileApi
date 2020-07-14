@@ -253,7 +253,8 @@ namespace ExileCore.PoEMemory.MemoryObjects
         private uint ParseEntity(long addrEntity, Dictionary<uint, Entity> entityCache, uint entitiesVersion, Stack<Entity> result,
             bool parseServerEntities)
         {
-            var entityId = M.Read<uint>(addrEntity + 0x50);
+            //var entityId = M.Read<uint>(addrEntity + 0x50);
+            var entityId = M.Read<uint>(addrEntity + 0x58); //3.12
             if (entityId <= 0) return 0;
 
             if (entityId >= int.MaxValue && !parseServerEntities)

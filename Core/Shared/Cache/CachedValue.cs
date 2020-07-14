@@ -23,7 +23,7 @@ namespace ExileCore.Shared.Cache
         //private object obj;
         protected CachedValue(Func<T> func)
         {
-            _func = func ?? throw new ArgumentNullException(nameof(func), "Cached Value ctor null function");
+            _func = func ?? throw new ArgumentNullException(nameof(func), "½w¦s­Èctor null¨ç¼Æ");
             Interlocked.Increment(ref TotalCount);
             Interlocked.Increment(ref LifeCount);
         }
