@@ -1,3 +1,12 @@
+
+
+# 3.12 
+  - 新增部分代碼以支援台版 POE
+  - 機器翻譯部分功能 
+  - 包含各大插件與私人插件
+
+//---
+
 # ExileApi
 Forum Thread discussing this repository and a list of possible plugin repositories can be found here https://www.ownedcore.com/forums/mmo/path-of-exile/poe-bots-programs/902969-exileapi-fork-3-11-release.html
 
