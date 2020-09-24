@@ -86,7 +86,7 @@ namespace ExileCore.PoEMemory
         00007FF63317CE6C | 49 8B 08                       | mov rcx,qword ptr ds:[r8]                       |
         00007FF63317CE6F | 49 8B 40 18                    | mov rax,qword ptr ds:[r8+18]                    |
         */
-
+        // e8 ?? ?? ?? ?? e8 ?? ?? ?? ?? ff 05
         private static readonly Pattern AreaChangePattern =
             new Pattern(
                 new byte[]

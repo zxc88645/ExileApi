@@ -30,11 +30,11 @@ namespace ExileCore
         #region messages
         [Menu("Messages", 2000)]
         public EmptyNode EmptyMessages { get; set; } = new EmptyNode();
-        [Menu("顯示資訊消息。", "將始終顯示在日誌視窗中。", 1, 2000)]
+        [Menu("啟用資訊消息。", "將始終顯示在日誌視窗中。", 1, 2000)]
         public ToggleNode ShowInformationMessages { get; set; } = new ToggleNode(true);
-        [Menu("顯示錯誤消息。", "將始終顯示在日誌視窗中。", 2, 2000)]
+        [Menu("啟用錯誤消息。", "將始終顯示在日誌視窗中。", 2, 2000)]
         public ToggleNode ShowErrorMessages { get; set; } = new ToggleNode(true);
-        [Menu("顯示調試消息。", "(De)也啟動日誌視窗中的條目。", 3, 2000)]
+        [Menu("啟用調試消息。", "(De)也啟動日誌視窗中的條目。", 3, 2000)]
         public ToggleNode ShowDebugMessages { get; set; } = new ToggleNode(false);
         [Menu("顯示日誌視窗。", 4, 2000)]
         public ToggleNode ShowDebugLog { get; set; } = new ToggleNode(false);
@@ -79,26 +79,26 @@ namespace ExileCore
         #endregion
 
         #region multithread
-        [Menu("多線程。", 4000)]
+        [Menu("多線程", 4000)]
         public EmptyNode EmptyMultithread { get; set; } = new EmptyNode();
-        [Menu("載入外掛程式多線程", 1, 4000)]
+        [Menu("加載插件多線程", 1, 4000)]
         public ToggleNode MultiThreadLoadPlugins { get; set; } = new ToggleNode(false);
-        [Menu("Coroutine 多線程。", "", 2, 4000)]
+        [Menu("協程 多線程", "", 2, 4000)]
         public ToggleNode CoroutineMultiThreading { get; set; } = new ToggleNode(true);
-        [Menu("添加了實體多線程。", 3, 4000)]
+        [Menu("實體多線程", 3, 4000)]
         public ToggleNode AddedMultiThread { get; set; } = new ToggleNode(false);
-        [Menu("解析實體多線程。", 4, 4000)]
+        [Menu("解析多線程", 4, 4000)]
         public ToggleNode ParseEntitiesInMultiThread { get; set; } = new ToggleNode(false);
         #endregion
 
         #region miscellaneous
-        [Menu("雜項。", 5000)]
+        [Menu("Miscellaneous", 5000)]
         public EmptyNode EmptyMiscellaneous { get; set; } = new EmptyNode();
-        [Menu("字體。", 1, 5000)]
-        public ListNode Font { get; set; } = new ListNode {Values = new List<string> {"Not found"}};
+        [Menu("Font", 1, 5000)]
+        public ListNode Font { get; set; } = new ListNode { Values = new List<string> { "Not found" } };
         [IgnoreMenu] // "Currently not works. Because this option broke calculate how much pixels needs for render."
-        public RangeNode<int> FontSize { get; set; } = new RangeNode<int>(15, 7, 36);
-        [Menu("體積。", 3, 5000)]
+        public RangeNode<int> FontSize { get; set; } = new RangeNode<int>(13, 7, 36);
+        [Menu("Volume", 3, 5000)]
         public RangeNode<int> Volume { get; set; } = new RangeNode<int>(100, 0, 100);
         #endregion
     }

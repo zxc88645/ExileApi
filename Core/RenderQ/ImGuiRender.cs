@@ -342,7 +342,6 @@ namespace ExileCore.RenderQ
                 ImGui.SetCurrentContext(context);
                 io = ImGui.GetIO();
 
-
                 // io.ConfigFlags = ImGuiConfigFlags.NavEnableKeyboard;
                 SetSize(FormBounds);
 
@@ -395,22 +394,11 @@ namespace ExileCore.RenderQ
                 }
             }
 
-            var imFontAtlasGetGlyphRangesCyrillic = ImGuiNative.ImFontAtlas_GetGlyphRangesCyrillic(io.Fonts.NativePtr);
+            //var imFontAtlasGetGlyphRangesCyrillic = ImGuiNative.ImFontAtlas_GetGlyphRangesCyrillic(io.Fonts.NativePtr);
+            var imFontAtlasGetGlyphRangesCyrillic = (ushort*)io.Fonts.GetGlyphRangesChineseFull();
 
-            //fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null), "Default", 14);
-
-
-            var fontAtlas = ImGui.GetIO().Fonts;
-
-            fonts["Default:13"] = new FontContainer(
-               fontAtlas.AddFontFromFileTTF(
-                @"fonts\\NotoSerifTC-Regular.otf",
-                20.0f,
-                null,
-                fontAtlas.GetGlyphRangesChineseFull()
-
-                ), "Default", 20);
-
+            fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null),
+                "Default", 13);
 
             foreach (var tuple in fontsForLoad)
             {
@@ -418,15 +406,10 @@ namespace ExileCore.RenderQ
 
                 fixed (byte* f = &bytes[0])
                 {
-                    //fonts[$"{tuple.Item1.Replace(".ttf", "").Replace("fonts\\", "")}:{tuple.Item2}"] =
-                    //    new FontContainer(
-                    //        ImGuiNative.ImFontAtlas_AddFontFromFileTTF(io.Fonts.NativePtr, f, tuple.Item2, null,
-                    //            imFontAtlasGetGlyphRangesCyrillic ), tuple.Item1, tuple.Item2);                   
-
                     fonts[$"{tuple.Item1.Replace(".ttf", "").Replace("fonts\\", "")}:{tuple.Item2}"] =
                         new FontContainer(
                             ImGuiNative.ImFontAtlas_AddFontFromFileTTF(io.Fonts.NativePtr, f, tuple.Item2, null,
-                                (ushort*)io.Fonts.GetGlyphRangesChineseFull()), tuple.Item1, tuple.Item2);
+                               imFontAtlasGetGlyphRangesCyrillic), tuple.Item1, tuple.Item2);
                 }
             }
 
@@ -570,16 +553,7 @@ namespace ExileCore.RenderQ
                     lastFontContainer = fontContainer;
                 }
 
-                try
-                {
-                    if (b) ImGui.PushFont(lastFontContainer.Atlas);
-
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
+                if (b) ImGui.PushFont(lastFontContainer.Atlas);
 
                 if (height == -1) height = lastFontContainer.Size;
                 var size = MeasureText(text, height);
