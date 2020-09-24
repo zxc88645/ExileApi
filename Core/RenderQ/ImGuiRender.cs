@@ -397,8 +397,21 @@ namespace ExileCore.RenderQ
             //var imFontAtlasGetGlyphRangesCyrillic = ImGuiNative.ImFontAtlas_GetGlyphRangesCyrillic(io.Fonts.NativePtr);
             var imFontAtlasGetGlyphRangesCyrillic = (ushort*)io.Fonts.GetGlyphRangesChineseFull();
 
-            fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null),
-                "Default", 13);
+
+            var fontAtlas = ImGui.GetIO().Fonts;
+
+            fonts["Default:13"] = new FontContainer(
+               fontAtlas.AddFontFromFileTTF(
+                @"fonts\\NotoSerifTC-Regular.ttf",
+                20.0f,
+                null,
+                fontAtlas.GetGlyphRangesChineseFull()
+
+                ), "Default", 20);
+
+
+            //fonts["Default:13"] = new FontContainer(ImGuiNative.ImFontAtlas_AddFontDefault(io.Fonts.NativePtr, null),
+            //    "Default", 13);
 
             foreach (var tuple in fontsForLoad)
             {
