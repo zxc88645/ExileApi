@@ -5,40 +5,61 @@ namespace GameOffsets
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
 	public struct IngameUElementsOffsets
 	{
-		[FieldOffset(0x210)] public long GetQuests;
-		[FieldOffset(0x238)] public long GameUI;
-		[FieldOffset(0x370)] public long Mouse;
-		[FieldOffset(0x378)] public long SkillBar;
-		[FieldOffset(0x380)] public long HiddenSkillBar;
-		[FieldOffset(0x3D8)] public long BanditDialog;
-		[FieldOffset(0x480)] public long QuestTracker;
-		[FieldOffset(0x4E0 /*4F0*/)] public long OpenLeftPanel;
-		[FieldOffset(0x4E8 /*4F8*/)] public long OpenRightPanel;
-		[FieldOffset(0x520)] public long InventoryPanel;
-		[FieldOffset(0x528)] public long StashElement;
-		[FieldOffset(0x550)] public long TreePanel;
-		[FieldOffset(0x558)] public long AtlasPanel;
-		[FieldOffset(0x588)] public long WorldMap;
-		[FieldOffset(0x5A8)] public long Map;
-		[FieldOffset(0x5B0)] public long itemsOnGroundLabelRoot;
-		[FieldOffset(0x630)] public long NpcDialog;
-		[FieldOffset(0x640)] public long QuestRewardWindow;
-		[FieldOffset(0x648)] public long PurchaseWindow;
-		[FieldOffset(0x650)] public long SellWindow;
-		[FieldOffset(0x658)] public long TradeWindow;
-		[FieldOffset(0x690)] public long MapDeviceWindow;
-		[FieldOffset(0x6E8)] public long IncursionWindow;
-		[FieldOffset(0x708)] public long DelveWindow;
-		[FieldOffset(0x728)] public long BetrayalWindow;
-		[FieldOffset(0x730)] public long ZanaMissionChoice;
-		[FieldOffset(0x740)] public long CraftBenchWindow;
-		[FieldOffset(0x748)] public long UnveilWindow;
-		[FieldOffset(0x778)] public long SynthesisWindow;
-		[FieldOffset(0x788)] public long MetamorphWindow;
-		[FieldOffset(0x7D8)] public long AreaInstanceUi;
-		[FieldOffset(0x918)] public long GemLvlUpPanel;
-		[FieldOffset(0x8A8)] public long InvitesPanel;
-		[FieldOffset(0x9C8)] public long ItemOnGroundTooltip;
+		[FieldOffset(0x210)] public long GetQuests;	//3.12.1TW
+		[FieldOffset(0x238)] public long GameUI; //3.12.1TW
+
+		//**
+
+		[FieldOffset(0x378)] public long Mouse; //3.12.1TW = Cursor
+		[FieldOffset(0x380)] public long SkillBar; //3.12.1TW
+		[FieldOffset(0x388)] public long HiddenSkillBar; //3.12.1TW
+
+		[FieldOffset(0x3E0)] public long BanditDialog;   //??
+		[FieldOffset(0x488)] public long QuestTracker;   //3.12.1TW
+
+		[FieldOffset(0x4F0 /*4F0*/)] public long OpenLeftPanel; //3.12.1TW
+		[FieldOffset(0x4F8 /*4F8*/)] public long OpenRightPanel;    //3.12.1TW
+
+		[FieldOffset(0x528)] public long InventoryPanel;    //3.12.1TW
+		[FieldOffset(0x530)] public long StashElement;    //3.12.1TW
+
+		[FieldOffset(0x558)] public long TreePanel;	//3.12.1TW
+		[FieldOffset(0x560)] public long AtlasPanel;  //3.12.1TW
+		[FieldOffset(0x590)] public long WorldMap;    //3.12.1TW
+
+
+		[FieldOffset(0x5B0)] public long Map;    //3.12.1TW
+		[FieldOffset(0x5B8)] public long itemsOnGroundLabelRoot; //3.12.1TW
+
+		[FieldOffset(0x640)] public long NpcDialog; //3.12.1TW
+
+		[FieldOffset(0x658)] public long QuestRewardWindow;  //3.12.1TW
+		[FieldOffset(0x660)] public long PurchaseWindow;	//3.12.1TW
+		[FieldOffset(0x668)] public long SellWindow;    //3.12.1TW
+		[FieldOffset(0x670)] public long TradeWindow;   //3.12.1TW
+
+		[FieldOffset(0x6A8)] public long MapDeviceWindow;   //3.12.1TW
+
+		[FieldOffset(0x700)] public long IncursionWindow;    //3.12.1TW
+
+		[FieldOffset(0x720)] public long DelveWindow;   //3.12.1TW
+		[FieldOffset(0x740)] public long BetrayalWindow;    //3.12.1TW
+		[FieldOffset(0x748)] public long ZanaMissionChoice; //3.12.1TW
+		[FieldOffset(0x758)] public long CraftBenchWindow;	//3.12.1TW
+		[FieldOffset(0x760)] public long UnveilWindow;  //3.12.1TW
+
+		[FieldOffset(0x790)] public long SynthesisWindow;   //3.12.1TW
+		[FieldOffset(0x7A0)] public long MetamorphWindow;   //3.12.1TW   //器官窗口
+		[FieldOffset(0x790)] public long AreaInstanceUi;    //3.12.1TW   
+
+		//----------
+
+		[FieldOffset(0x960)] public long GemLvlUpPanel;    //3.12.1TW
+
+		[FieldOffset(0x918)] public long InvitesPanel;  //?? 被邀請的視窗
+
+		[FieldOffset(0x9C8)] public long ItemOnGroundTooltip;   //??
+
 		[FieldOffset(0x0/*0xF18*/)] public long MapTabWindowStartPtr;//TOFO: Fixme. Cause reading errors
 	}
 }
