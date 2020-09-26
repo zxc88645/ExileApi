@@ -14,6 +14,8 @@ namespace GameOffsets
 		[FieldOffset(0x380)] public long SkillBar; //3.12.1TW
 		[FieldOffset(0x388)] public long HiddenSkillBar; //3.12.1TW
 
+		[FieldOffset(0x398)] public long StickiePartyPanel; //3.12.1TW my
+
 		[FieldOffset(0x3E0)] public long BanditDialog;   //??
 		[FieldOffset(0x488)] public long QuestTracker;   //3.12.1TW
 
