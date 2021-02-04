@@ -40,7 +40,7 @@ namespace ExileCore.PoEMemory.MemoryObjects
         public SkillBarElement HiddenSkillBar => GetObject<SkillBarElement>(IngameUIElementsStruct.HiddenSkillBar);
         public Element StickiePartyPanel => GetObject<Element>(IngameUIElementsStruct.StickiePartyPanel);
         public PoeChatElement ChatBox => GetObject<PoeChatElement>(M.Read<long>(Address + 0x408, 0x2F0, 0x350));
-              public IList<string> ChatMessages => ChatBox.Children.Select(x => x.Text).ToList();
+        public IList<string> ChatMessages => ChatBox.Children.Select(x => x.Text).ToList();
         public Element QuestTracker => GetObject<Element>(IngameUIElementsStruct.QuestTracker);
         public QuestRewardWindow QuestRewardWindow => GetObject<QuestRewardWindow>(IngameUIElementsStruct.QuestRewardWindow);
         public Element OpenLeftPanel => GetObject<Element>(IngameUIElementsStruct.OpenLeftPanel);

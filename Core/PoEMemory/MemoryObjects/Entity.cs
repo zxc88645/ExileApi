@@ -747,6 +747,7 @@ namespace ExileCore.PoEMemory.MemoryObjects
 
                 if (Path.Equals("Metadata/MiscellaneousObjects/Breach/BreachObject", StringComparison.Ordinal)) return EntityType.Breach;
                 if (Path.Equals("Metadata/Terrain/Leagues/Delve/Objects/DelveMineral")) return EntityType.Resource;
+                if (Path.Equals("Metadata/Terrain/Leagues/Heist/Objects/MissionEntryPortal")) return EntityType.Portal;
 
                 return EntityType.IngameIcon;
             }
