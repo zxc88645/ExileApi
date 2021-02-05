@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExileCore.Shared.Attributes;
 
 namespace ExileCore.Shared.PluginAutoUpdate.Settings
 {
@@ -14,8 +15,8 @@ namespace ExileCore.Shared.PluginAutoUpdate.Settings
         public ToggleNode Enable { get; set; } = new ToggleNode(true);
         public TextNode Name { get; set; } = new TextNode();
         public TextNode SourceUrl { get; set; } = new TextNode();
+        [IgnoreMenu]
         public DateTime LastUpdated { get; set; } = DateTime.MinValue;
-
 
         private Random Random { get; } = new Random();
         private string _uniqueName = "";
@@ -33,20 +34,19 @@ namespace ExileCore.Shared.PluginAutoUpdate.Settings
 
         public event EventHandler DeleteRequested;
 
+        public void ChangeSourceUrlValue(string value)
+        {
+            if (SourceUrl?.Value == null) return;
+            if (SourceUrl?.Value == value) return;
+            SourceUrl.Value = value;
+            Name = value.Split('/').Last();
+        }
+
         public void Draw()
         {
             var enable = Enable.Value;
-            ImGui.Checkbox($"Auto Update{UniqueName}", ref enable);
+            ImGui.Checkbox($"{Name?.Value}{UniqueName}", ref enable);
             Enable.Value = enable;
-
-            ImGui.SameLine();
-            ImGui.Indent(110);
-            ImGui.PushItemWidth(200);
-            string name = Name.Value;
-            ImGui.InputText(UniqueName + "Name", ref name, 50);
-            Name.Value = name;
-            ImGui.PopItemWidth();
-            ImGui.Unindent(110);
 
             ImGui.SameLine();
             ImGui.Indent(344);
@@ -60,12 +60,14 @@ namespace ExileCore.Shared.PluginAutoUpdate.Settings
             ImGui.Indent(20);
             string sourceUrl = SourceUrl.Value;
             ImGui.InputText(UniqueName + "SourceUrl", ref sourceUrl, 200);
-            SourceUrl.Value = sourceUrl;
+            ChangeSourceUrlValue(sourceUrl);
             ImGui.Unindent(20);
 
             ImGui.Spacing();
             ImGui.Spacing();
             ImGui.Spacing();
         }
+
+
     }
 }

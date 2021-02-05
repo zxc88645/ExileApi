@@ -10,6 +10,6 @@ namespace GameOffsets
         [FieldOffset(0x34)] public Vector2i WasInThisPosition;
         [FieldOffset(0x470)] public byte IsMoving;
         [FieldOffset(0x54C)] public Vector2i WantMoveToPosition;
-        [FieldOffset(0x558)] public float StayTime;
+        [FieldOffset(0x554)] public float StayTime;
     }
 }

@@ -14,18 +14,6 @@
         "Value": true
       },
       "Name": {
-        "Value": "DevTree"
-      },
-      "SourceUrl": {
-        "Value": "https://github.com/Queuete/DevTree"
-      },
-      "LastUpdated": "0001-01-01T00:00:00"
-    },
-    {
-      "Enable": {
-        "Value": true
-      },
-      "Name": {
         "Value": "HealthBars"
       },
       "SourceUrl": {
@@ -74,58 +62,10 @@
         "Value": true
       },
       "Name": {
-        "Value": "BuffUtil"
-      },
-      "SourceUrl": {
-        "Value": "https://github.com/Queuete/BuffUtil"
-      },
-      "LastUpdated": "0001-01-01T00:00:00"
-    },
-    {
-      "Enable": {
-        "Value": true
-      },
-      "Name": {
         "Value": "BasicFlaskRoutine"
       },
       "SourceUrl": {
         "Value": "https://github.com/Queuete/BasicFlaskRoutine"
-      },
-      "LastUpdated": "0001-01-01T00:00:00"
-    },
-    {
-      "Enable": {
-        "Value": false
-      },
-      "Name": {
-        "Value": "UnIdy"
-      },
-      "SourceUrl": {
-        "Value": "https://github.com/Queuete/UnIdy"
-      },
-      "LastUpdated": "0001-01-01T00:00:00"
-    },
-    {
-      "Enable": {
-        "Value": false
-      },
-      "Name": {
-        "Value": "AutoQuit"
-      },
-      "SourceUrl": {
-        "Value": "https://github.com/Queuete/AutoQuit"
-      },
-      "LastUpdated": "0001-01-01T00:00:00"
-    },
-    {
-      "Enable": {
-        "Value": true
-      },
-      "Name": {
-        "Value": "PickIt"
-      },
-      "SourceUrl": {
-        "Value": "https://github.com/Queuete/PickIt"
       },
       "LastUpdated": "0001-01-01T00:00:00"
     },
@@ -146,22 +86,58 @@
         "Value": true
       },
       "Name": {
-        "Value": "DeliriumSpawnerHighlight"
+        "Value": "MiscInformation"
       },
       "SourceUrl": {
-        "Value": "https://github.com/Queuete/DeliriumSpawnerHighlight"
+        "Value": "https://github.com/IlliumIv/MiscInformation"
       },
       "LastUpdated": "0001-01-01T00:00:00"
     },
-	  {
+	{
       "Enable": {
         "Value": true
       },
       "Name": {
-        "Value": "CoPilot"
+        "Value": "SimpleStashie"
       },
       "SourceUrl": {
-        "Value": "https://github.com/totalschaden/copilot"
+        "Value": "https://github.com/Queuete/SimpleStashie"
+      },
+      "LastUpdated": "0001-01-01T00:00:00"
+    },
+	{
+      "Enable": {
+        "Value": true
+      },
+      "Name": {
+        "Value": "SimplePickIt"
+      },
+      "SourceUrl": {
+        "Value": "https://github.com/Queuete/SimplePickIt"
+      },
+      "LastUpdated": "0001-01-01T00:00:00"
+    },
+	{
+      "Enable": {
+        "Value": true
+      },
+      "Name": {
+        "Value": "SimpleHotkeyChain"
+      },
+      "SourceUrl": {
+        "Value": "https://github.com/Queuete/SimpleHotkeyChain"
+      },
+      "LastUpdated": "0001-01-01T00:00:00"
+    },
+	{
+      "Enable": {
+        "Value": true
+      },
+      "Name": {
+        "Value": "EliteBar"
+      },
+      "SourceUrl": {
+        "Value": "https://github.com/Queuete/EliteBar"
       },
       "LastUpdated": "0001-01-01T00:00:00"
     }

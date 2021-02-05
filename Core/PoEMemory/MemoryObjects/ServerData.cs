@@ -7,80 +7,110 @@ using ExileCore.Shared.Cache;
 using ExileCore.Shared.Enums;
 using ExileCore.Shared.Helpers;
 using GameOffsets;
+using GameOffsets.Native;
 
 namespace ExileCore.PoEMemory.MemoryObjects
 {
+    public class ServerPlayerData : RemoteMemoryObject
+    {
+        private readonly CachedValue<ServerPlayerDataOffsets> _CachedValue;
+
+        public ServerPlayerData()
+        {
+            _CachedValue = new FrameCache<ServerPlayerDataOffsets>(() => M.Read<ServerPlayerDataOffsets>(Address));
+        }
+        public ServerPlayerDataOffsets ServerPlayerDataStruct => _CachedValue.Value;
+
+        public CharacterClass Class => (CharacterClass) (ServerPlayerDataStruct.PlayerClass & 0x0F);
+        public int Level => ServerPlayerDataStruct.CharacterLevel;
+        public int PassiveRefundPointsLeft => ServerPlayerDataStruct.PassiveRefundPointsLeft;
+        public int QuestPassiveSkillPoints => ServerPlayerDataStruct.QuestPassiveSkillPoints;
+        public int FreePassiveSkillPointsLeft => ServerPlayerDataStruct.FreePassiveSkillPointsLeft;
+        public int TotalAscendencyPoints => ServerPlayerDataStruct.TotalAscendencyPoints;
+        public int SpentAscendencyPoints => ServerPlayerDataStruct.SpentAscendencyPoints;
+        public NativePtrArray AllocatedPassivesIds => ServerPlayerDataStruct.PassiveSkillIds;
+    }
     public class ServerData : RemoteMemoryObject
     {
         private static readonly int NetworkStateOff =
             Extensions.GetOffset<ServerDataOffsets>(nameof(ServerDataOffsets.NetworkState)) + ServerDataOffsets.Skip;
 
-        private readonly CachedValue<ServerDataOffsets> _cachedValue;
-        private readonly List<Player> result = new List<Player>();
+        private readonly CachedValue<ServerDataOffsets> _CachedValue;
+        private readonly CachedValue<ServerPlayerData> _PlayerData;
+        private readonly List<Player> _NearestPlayers = new List<Player>();
+
+        private const int MaxElementsToScan = 1024;
 
         public ServerData()
         {
-            _cachedValue = new FrameCache<ServerDataOffsets>(() => M.Read<ServerDataOffsets>(Address + ServerDataOffsets.Skip));
+            _CachedValue = new FrameCache<ServerDataOffsets>(() => M.Read<ServerDataOffsets>(Address + ServerDataOffsets.Skip));
+            _PlayerData = new FrameCache<ServerPlayerData>(() => GetObject<ServerPlayerData>(_CachedValue.Value.PlayerRelatedData));
         }
 
-        public ServerDataOffsets ServerDataStruct => _cachedValue.Value;
+        public ServerDataOffsets ServerDataStruct => _CachedValue.Value;
+        public ServerPlayerData PlayerInformation => _PlayerData.Value;
         public ushort TradeChatChannel => ServerDataStruct.TradeChatChannel;
         public ushort GlobalChatChannel => ServerDataStruct.GlobalChatChannel;
         public byte MonsterLevel => ServerDataStruct.MonsterLevel;
+        public CharacterClass PlayerClass => PlayerInformation.Class;
 
         //if 51 - more than 50 monsters remaining (no exact number)
-        //if 255 - not supported for current map (town or scenary map)
-        public CharacterClass PlayerClass => (CharacterClass) (ServerDataStruct.PlayerClass & 0xF);
+        //if 255 - not supported for current map (town or scenery map)
         public byte MonstersRemaining => ServerDataStruct.MonstersRemaining;
-        public ushort CurrentSulphiteAmount => _cachedValue.Value.CurrentSulphiteAmount;
-        public int CurrentAzuriteAmount => _cachedValue.Value.CurrentAzuriteAmount;
+        public ushort CurrentSulphiteAmount => _CachedValue.Value.CurrentSulphiteAmount;
+        public int CurrentAzuriteAmount => _CachedValue.Value.CurrentAzuriteAmount;
 
         public IList<Player> NearestPlayers
         {
             get
             {
-                if (Address == 0) return null;
-                var startPtr = ServerDataStruct.NearestPlayers.First;
-                var endPtr = ServerDataStruct.NearestPlayers.Last;
-                startPtr += 16; //Don't ask me why. Just skipping first 2
-
-                //Sometimes wrong offsets and read 10000000+ objects
-                if (startPtr < Address || (endPtr - startPtr) / 16 > 50)
-                    return result;
-
-                result.Clear();
-
-                for (var addr = startPtr; addr < endPtr; addr += 16) //16 because we are reading each second pointer (pointer vectors)
+                if (Address == 0)
                 {
-                    result.Add(ReadObject<Player>(addr));
+                    return _NearestPlayers;
                 }
 
-                return result;
+                const int structSize = 0x18;
+                var first = ServerDataStruct.NearestPlayers.First;
+                var last = ServerDataStruct.NearestPlayers.Last;
+
+                if (first < 0 || last < 0 || (last - first) / structSize > 64)
+                {
+                    return _NearestPlayers;
+                }
+
+                _NearestPlayers.Clear();
+
+                for (var playerAddress = first; playerAddress < last; playerAddress += structSize)
+                {
+                    _NearestPlayers.Add(ReadObject<Player>(playerAddress));
+                }
+
+                return _NearestPlayers;
             }
         }
 
         public int GetBeastCapturedAmount(BestiaryCapturableMonster monster)
         {
-            return M.Read<int>(Address + 0x5240 + monster.Id * 4);
+            return M.Read<int>(Address + ServerDataOffsets.BestiaryBeastsCapturedCounts + monster.Id * 4);
         }
 
         #region PlayerData
 
         public ushort LastActionId => ServerDataStruct.LastActionId;
-        public int CharacterLevel => ServerDataStruct.CharacterLevel;
-        public int PassiveRefundPointsLeft => ServerDataStruct.PassiveRefundPointsLeft;
-        public int FreePassiveSkillPointsLeft => ServerDataStruct.FreePassiveSkillPointsLeft;
-        public int QuestPassiveSkillPoints => ServerDataStruct.QuestPassiveSkillPoints;
-        public int TotalAscendencyPoints => ServerDataStruct.TotalAscendencyPoints;
-        public int SpentAscendencyPoints => ServerDataStruct.SpentAscendencyPoints;
+        public int CharacterLevel => PlayerInformation.Level;
+        public int PassiveRefundPointsLeft => PlayerInformation.PassiveRefundPointsLeft;
+        public int FreePassiveSkillPointsLeft => PlayerInformation.FreePassiveSkillPointsLeft;
+        public int QuestPassiveSkillPoints => PlayerInformation.QuestPassiveSkillPoints;
+        public int TotalAscendencyPoints => PlayerInformation.TotalAscendencyPoints;
+        public int SpentAscendencyPoints => PlayerInformation.SpentAscendencyPoints;
         public PartyAllocation PartyAllocationType => (PartyAllocation) ServerDataStruct.PartyAllocationType;
         public string League => ServerDataStruct.League.ToString(M);
         public PartyStatus PartyStatusType => (PartyStatus) this.ServerDataStruct.PartyStatusType;
         public bool IsInGame => NetworkState == NetworkStateE.Connected;
         public NetworkStateE NetworkState => (NetworkStateE) this.ServerDataStruct.NetworkState;
         public int Latency => ServerDataStruct.Latency;
-        public string Guild => NativeStringReader.ReadString(M.Read<long>(Address + 0x70E0), M);
-        public BetrayalData BetrayalData => GetObject<BetrayalData>(M.Read<long>(Address + 0x3C8, 0x718));
+        public string Guild => NativeStringReader.ReadString(ServerDataStruct.GuildNameAddress, M);
+        public BetrayalData BetrayalData => GetObject<BetrayalData>(M.Read<long>(Address + 0x3C8, 0x718)); // TODO: 3.12.2
 
         public IList<ushort> SkillBarIds
         {
@@ -88,23 +118,23 @@ namespace ExileCore.PoEMemory.MemoryObjects
             {
                 if (Address == 0) return new List<ushort>();
                 
-                var readAddr = _cachedValue.Value.SkillBarIds;
+                var skillBarIds = _CachedValue.Value.SkillBarIds;
 
                 var res = new List<ushort>
                 {
-                    readAddr.SkillBar1,
-                    readAddr.SkillBar2,
-                    readAddr.SkillBar3,
-                    readAddr.SkillBar4,
-                    readAddr.SkillBar5,
-                    readAddr.SkillBar6,
-                    readAddr.SkillBar7,
-                    readAddr.SkillBar8,
-                    readAddr.SkillBar9,
-                    readAddr.SkillBar10,
-                    readAddr.SkillBar11,
-                    readAddr.SkillBar12,
-                    readAddr.SkillBar13
+                    skillBarIds.SkillBar1,
+                    skillBarIds.SkillBar2,
+                    skillBarIds.SkillBar3,
+                    skillBarIds.SkillBar4,
+                    skillBarIds.SkillBar5,
+                    skillBarIds.SkillBar6,
+                    skillBarIds.SkillBar7,
+                    skillBarIds.SkillBar8,
+                    skillBarIds.SkillBar9,
+                    skillBarIds.SkillBar10,
+                    skillBarIds.SkillBar11,
+                    skillBarIds.SkillBar12,
+                    skillBarIds.SkillBar13
                 };
 
                 return res;
@@ -115,24 +145,30 @@ namespace ExileCore.PoEMemory.MemoryObjects
         {
             get
             {
-                if (Address == 0) 
-                    return null;
-                var fisrPtr = ServerDataStruct.PassiveSkillIds.First;
-                var endPtr = ServerDataStruct.PassiveSkillIds.Last;
-                var totalStats = (int) (endPtr - fisrPtr);
-                var bytes = M.ReadMem(fisrPtr, totalStats);
-                var res = new List<ushort>();
+                var passiveSkillIds = new List<ushort>();
 
+                if (Address == 0)
+                {
+                    return passiveSkillIds;
+                }
+
+                var first = PlayerInformation.AllocatedPassivesIds.First;
+                var last = PlayerInformation.AllocatedPassivesIds.Last;
+                var totalStats = (int) (last - first);
+                
                 if (totalStats < 0 || totalStats > 500)
-                    return new List<ushort>();
+                {
+                    return passiveSkillIds;
+                }
 
+                var bytes = M.ReadMem(first, totalStats);
                 for (var i = 0; i < bytes.Length; i += 2)
                 {
                     var id = BitConverter.ToUInt16(bytes, i);
-                    res.Add(id);
+                    passiveSkillIds.Add(id);
                 }
 
-                return res;
+                return passiveSkillIds;
             }
         }
 
@@ -140,89 +176,58 @@ namespace ExileCore.PoEMemory.MemoryObjects
 
         #region Stash Tabs
 
-        // public IList<ServerStashTab> PlayerStashTabs => GetStashTabs(Extensions.GetOffset<ServerDataOffsets>("PlayerStashTabsStart"), Extensions.GetOffset<ServerDataOffsets>("PlayerStashTabsEnd"));
-        public IList<ServerStashTab> PlayerStashTabs =>
-            GetStashTabs(Extensions.GetOffset<ServerDataOffsets>(nameof(ServerDataOffsets.PlayerStashTabs)),
-                Extensions.GetOffset<ServerDataOffsets>(nameof(ServerDataOffsets.PlayerStashTabs)) + 0x8);
-        public IList<ServerStashTab> GuildStashTabs =>
-            GetStashTabs(Extensions.GetOffset<ServerDataOffsets>(nameof(ServerDataOffsets.GuildStashTabs)),
-                Extensions.GetOffset<ServerDataOffsets>(nameof(ServerDataOffsets.GuildStashTabs)) + 0x8);
+        public IList<ServerStashTab> PlayerStashTabs => GetStashTabs(ServerDataStruct.PlayerStashTabs);
+        public IList<ServerStashTab> GuildStashTabs =>  GetStashTabs(ServerDataStruct.GuildStashTabs);
 
-        private IList<ServerStashTab> GetStashTabs(int offsetBegin, int offsetEnd)
+        private IList<ServerStashTab> GetStashTabs(NativePtrArray tabs)
         {
-            var firstAddr = M.Read<long>(Address + offsetBegin);
-            var lastAddr = M.Read<long>(Address + offsetEnd);
+            var first = tabs.First;
+            var last = tabs.Last;
 
-            if (firstAddr <= 0 || lastAddr <= 0) return null;
-            
-            var len = lastAddr - firstAddr;
-            if (len <= 0 || len > 2048 || firstAddr <= 0 || lastAddr <= 0)
+            if (first <= 0 || last <= 0)
+            {
                 return new List<ServerStashTab>();
+            }
+            
+            var tabCount = (last - first) / ServerStashTab.StructSize;
+            
+            if (tabCount <= 0 || tabCount > MaxElementsToScan) 
+            {
+                return new List<ServerStashTab>();
+            }
 
-            var tabs = M.ReadStructsArray<ServerStashTab>(firstAddr, lastAddr, ServerStashTab.StructSize, TheGame);
-
-            //Skipping hidden tabs of premium maps tab (read notes in StashTabController.cs)
-            //tabs.RemoveAll(x => (x.Flags & InventoryTabFlags.Hidden) == InventoryTabFlags.Hidden);
-            return new List<ServerStashTab>(tabs);
-
-            // return new List<IServerStashTab>(tabs.Where(x=> (x.Flags & InventoryTabFlags.Hidden) != 0));
+            return M.ReadStructsArray<ServerStashTab>(first, last, ServerStashTab.StructSize, TheGame).ToList();
         }
 
         #endregion
 
         #region Inventories
 
-        public IList<InventoryHolder> PlayerInventories
+        public IList<InventoryHolder> PlayerInventories => GetInventory(ServerDataStruct.PlayerInventories);
+        public IList<InventoryHolder> NPCInventories => GetInventory(ServerDataStruct.NPCInventories);
+        public IList<InventoryHolder> GuildInventories => GetInventory(ServerDataStruct.GuildInventories);
+
+        private IList<InventoryHolder> GetInventory(NativePtrArray inventories)
         {
-            get
+            var first = inventories.First;
+            var last = inventories.Last;
+
+            if (first <= 0 || last <= 0)
             {
-                var firstAddr = ServerDataStruct.PlayerInventories.First;
-                var lastAddr = ServerDataStruct.PlayerInventories.Last;
-                if (firstAddr == 0) return null;
-
-                //Sometimes wrong offsets and read 10000000+ objects
-                if (firstAddr == 0 || (lastAddr - firstAddr) / InventoryHolder.StructSize > 1024)
-                    return new List<InventoryHolder>();
-
-                return M.ReadStructsArray<InventoryHolder>(firstAddr, lastAddr, InventoryHolder.StructSize, this).ToList();
+                return new List<InventoryHolder>();
             }
+
+            var inventoryCount = (last - first) / InventoryHolder.StructSize;
+
+            if (inventoryCount < 0 || inventoryCount > MaxElementsToScan)
+            {
+                return new List<InventoryHolder>();
+            }
+
+            return M.ReadStructsArray<InventoryHolder>(first, last, InventoryHolder.StructSize, this).ToList();
         }
 
-        public IList<InventoryHolder> NPCInventories
-        {
-            get
-            {
-                var firstAddr = ServerDataStruct.NPCInventories.First;
-                var lastAddr = ServerDataStruct.NPCInventories.Last;
-                if (firstAddr == 0) return null;
-        
-
-                //Sometimes wrong offsets and read 10000000+ objects
-                if (firstAddr == 0 || (lastAddr - firstAddr) / InventoryHolder.StructSize > 1024)
-                    return new List<InventoryHolder>();
-
-                return M.ReadStructsArray<InventoryHolder>(firstAddr, lastAddr, InventoryHolder.StructSize, TheGame).ToList();
-            }
-        }
-
-        public IList<InventoryHolder> GuildInventories
-        {
-            get
-            {
-                var firstAddr = ServerDataStruct.GuildInventories.First;
-                var lastAddr = ServerDataStruct.GuildInventories.Last;
-                if (firstAddr == 0) return null;
-           
-
-                //Sometimes wrong offsets and read 10000000+ objects
-                if (firstAddr == 0 || (lastAddr - firstAddr) / InventoryHolder.StructSize > 1024)
-                    return new List<InventoryHolder>();
-
-                return M.ReadStructsArray<InventoryHolder>(firstAddr, lastAddr, InventoryHolder.StructSize, TheGame).ToList();
-            }
-        }
-
-        #region Utils functions
+        #region Inventory Util functions
 
         public ServerInventory GetPlayerInventoryBySlot(InventorySlotE slot)
         {
@@ -261,61 +266,88 @@ namespace ExileCore.PoEMemory.MemoryObjects
 
         #endregion
 
-        #region Completed Areas
+        #region Atlas
 
         public IList<WorldArea> CompletedAreas => GetAreas(ServerDataStruct.CompletedMaps);
-        public IList<WorldArea> ShapedMaps => new List<WorldArea>();// GetAreas(ServerDataStruct.ShapedAreas);
         public IList<WorldArea> BonusCompletedAreas => GetAreas(ServerDataStruct.BonusCompletedAreas);
-        public IList<WorldArea> ElderGuardiansAreas => new List<WorldArea>();// GetAreas(ServerDataStruct.ElderGuardiansAreas);
-        public IList<WorldArea> MasterAreas => new List<WorldArea>();// GetAreas(ServerDataStruct.MasterAreas);
-        public IList<WorldArea> ShaperElderAreas => new List<WorldArea>();// GetAreas(ServerDataStruct.ElderInfluencedAreas);
+        public Dictionary<AtlasRegionE, WorldArea> WatchtowerMaps => GetWatchtowerMaps(Address + ServerDataOffsets.AtlasWatchtowerLocations);
+
+        #region Features removed from 3.9 patch
+        [ObsoleteAttribute("Shaped maps were removed with the 3.9.0 Atlas Rework. You should not be using this.", false)]
+        public IList<WorldArea> ShapedMaps => new List<WorldArea>();
+        [ObsoleteAttribute("Elder Guardian Areas were removed with the 3.9.0 Atlas Rework. You should not be using this.", false)]
+        public IList<WorldArea> ElderGuardiansAreas => new List<WorldArea>();
+        [ObsoleteAttribute("Masters Areas were removed with the 3.9.0 Atlas Rework. You should not be using this.", false)]
+        public IList<WorldArea> MasterAreas => new List<WorldArea>();
+        [ObsoleteAttribute("Elder Influenced Areas were removed with the 3.9.0 Atlas Rework. You should not be using this.", false)]
+        public IList<WorldArea> ShaperElderAreas => new List<WorldArea>();
+        #endregion
+
         private IList<WorldArea> GetAreas(long address)
         {
-            if (Address == 0 || address == 0)
-                return new List<WorldArea>();
+            var worldAreas = new List<WorldArea>();
 
-            var res = new List<WorldArea>();
+            if (Address == 0 || address == 0) return worldAreas;
+
             var size = M.Read<int>(Address - 0x8);
             var listStart = M.Read<long>(address);
-            var error = 0;
+            var errorCount = 0;
 
             if (listStart == 0 || size == 0)
-                return res;
+                return worldAreas;
 
-            for (var addr = M.Read<long>(listStart); addr != listStart; addr = M.Read<long>(addr))
+            for (var areaAddress = M.Read<long>(listStart); areaAddress != listStart; areaAddress = M.Read<long>(areaAddress))
             {
-                if (addr == 0) return res;
-                var byAddress = TheGame.Files.WorldAreas.GetByAddress(M.Read<long>(addr + 0x18));
+                if (areaAddress == 0)
+                {
+                    return worldAreas;
+                }
+
+                var byAddress = TheGame.Files.WorldAreas.GetByAddress(M.Read<long>(areaAddress + 0x18));
 
                 if (byAddress != null)
-                    res.Add(byAddress);
+                    worldAreas.Add(byAddress);
 
                 if (--size < 0) break;
-                error++;
+                errorCount++;
 
                 //Sometimes wrong offsets and read 10000000+ objects
-                if (error > 1024)
+                if (errorCount > 1024)
                 {
-                    res = new List<WorldArea>();
+                    worldAreas = new List<WorldArea>();
                     break;
                 }
             }
 
-            return res;
+            return worldAreas;
         }
 
-        #endregion
+        private Dictionary<AtlasRegionE, WorldArea> GetWatchtowerMaps(long first)
+        {
+            var maps = new Dictionary<AtlasRegionE, WorldArea>();
+            if (first == 0)
+            {
+                return maps;
+            }
 
-        #region Atlas
+            first += 0x08; // Array is 8x16 bytes => 8 byte address (Atlas Info) + 8 byte address (Watchtower Map)
+            for (int i = 0; i < 8; ++i, first += 0x10)
+            {
+                var map = ReadObject<WorldArea>(first);
+                maps[(AtlasRegionE) i] = map ?? new WorldArea();
+            }
+
+            return maps;
+        }
 
         public byte GetAtlasRegionUpgradesByRegion(int regionId)
         {
-            return M.Read<byte>(Address + ServerDataOffsets.ATLAS_REGION_UPGRADES + regionId);
+            return M.Read<byte>(Address + ServerDataOffsets.AtlasRegionUpgrades + regionId);
         }
 
         public byte GetAtlasRegionUpgradesByRegion(AtlasRegion region)
         {
-            return M.Read<byte>(Address + ServerDataOffsets.ATLAS_REGION_UPGRADES + region.Index);
+            return M.Read<byte>(Address + ServerDataOffsets.AtlasRegionUpgrades + region.Index);
         }
 
         #endregion

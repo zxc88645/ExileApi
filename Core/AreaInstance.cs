@@ -15,7 +15,7 @@ namespace ExileCore
             RealLevel = realLevel;
             Name = area.Name;
             Act = area.Act;
-            IsTown = area.IsTown;
+            IsTown = area.IsTown || area.RawName.Equals("HeistHub");
             IsHideout = Name.Contains("Hideout") && !Name.Contains("Syndicate Hideout");
             IsHideout = (Name.Contains("藏身處") && !Name.Contains("密教藏身處")) || IsHideout;
             HasWaypoint = area.HasWaypoint || IsHideout;

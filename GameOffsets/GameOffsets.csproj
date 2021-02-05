@@ -40,6 +40,7 @@
     <Compile Include="ActionWrapperOffsets.cs" />
     <Compile Include="ActorComponentOffsets.cs" />
     <Compile Include="ActorDeployedObject.cs" />
+    <Compile Include="BaseComponentOffsets.cs" />
     <Compile Include="BuffOffsets.cs" />
     <Compile Include="BuffStringOffsets.cs" />
     <Compile Include="CameraOffsets.cs" />
@@ -54,6 +55,9 @@
     <Compile Include="Example.cs" />
     <Compile Include="FilesOffsets.cs" />
     <Compile Include="FlaskOffsets.cs" />
+    <Compile Include="HeistBlueprintComponentOffsets.cs" />
+    <Compile Include="HeistContractComponent.cs" />
+    <Compile Include="HeistEquipmentComponentOffsets.cs" />
     <Compile Include="IngameDataOffsets.cs" />
     <Compile Include="IngameStateOffsets.cs" />
     <Compile Include="IngameUElementsOffsets.cs" />
